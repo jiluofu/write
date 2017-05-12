@@ -60,7 +60,7 @@ class Jianshu:
 
         content = ['\n']
         for i in range(0, len(imgs)):
-            content.append('![](' + imgs[i] + ')')
+            content.append('![](' + imgs[i] + '?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240' + ')')
 
         return '\n\n\n'.join(content)
 
