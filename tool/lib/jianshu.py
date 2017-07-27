@@ -97,7 +97,8 @@ class Jianshu:
         cookies_str = ''
         for item in cookies:
             cookies_str += item['name'] + '=' + item['value'] + ';'
-        print(cookies_str)
+        cf.set('jianshu', 'cookie', cookies_str)
+        cf.write(open(conf_path, 'w'))
 
         # 关闭浏览器
         driver.close()
