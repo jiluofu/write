@@ -4,6 +4,18 @@ import os
 import requests
 import http.cookiejar as cookielib
 import time
+import configparser
+import re
+from selenium import webdriver
+
+conf_path = '/Users/zhuxu/Documents/mmjstool/synctoweb/syncart/sync.conf'
+chromedriver_path = '/Users/zhuxu/Documents/mmjstool/chromedriver'
+
+cf = configparser.RawConfigParser()
+cf.read(conf_path)
+username = cf.get('jianshu', 'username')
+password = cf.get('jianshu', 'password')
+
 
 class Jianshu:
 
@@ -12,7 +24,7 @@ class Jianshu:
         'Host': 'www.jianshu.com',
         'Referer': 'http://www.jianshu.com/',
         'User-Agent': agent,
-        'Cookie': 'UM_distinctid=15acba07a534ff-058e8856965773-1d3b6853-1aeaa0-15acba07a54239; CNZZDATA1258679142=139791223-1489019205-%7C1493262381; _gat=1; remember_user_token=W1s1MTAwMV0sIiQyYSQxMCRtc3JidDFZei90T2tvWWNkdXRNajV1IiwiMTQ5NDU2OTgwNy44MDg2NTY3Il0%3D--d866b392fb0734f354d7172d50d0157513d95173; _session_id=ckxQYnRweXo1NGYrb1QyNzB5d1k1THFqM0ViLzNmQ2RsSDdBNC81Q0EwM3JPbnEweGduRnhITFNxYjRFVUQrRzREQzZKNnhhWlhWb2h1aUFlTmo2NlFRNWZLYUhiY3pMMUFPdnp2OG5kSEJ2TE9MdG95SCt4TmI3Uk9xRnoyRklBWmJ6VHIvSWFpYUV3amQyOG90WHMxT1ZOVnhVUkdqUUhTdzZBcmhnRnk3aG1tOExzQy9YMTV5bTRTbHFaSW1UVDdJTTJOWXVXNjNiTTJDZC9PaVVvRENpcXR4TlJ1a1RpK1l4NllEdUgvNlRIQkF5UmcvSHhXcnZQZktTMTY2SUFyVytoRHpQNkNUWHJoa0Uvb3FFSEJlZjhoZWhIRGdPdHE2UnQweXp6T0EvMVRKenlyV0tTSFZNbEw3RE1jN2lFeDRVMzJFb21PRDJrZGthaEg3VExGNUwzYnBSS2hIZlJxZ3VaN0ZmRTl6SHc1bDI2SndhbHlHQ0t4VGFBTFBzWks4a3NHWnZzVmhUNUlIK2VRSGVHTnVtaEFWSDRjbDg5LzdveEp5ZGs3Zz0tLUwrSE9mUzlZZDNrUUpwVDUxdGl2aVE9PQ%3D%3D--4acb1f693f5da4753c501f2a332499f72b8b9c5d; _ga=GA1.2.401893218.1489044269; _gid=GA1.2.1062414040.1494569811; Hm_lvt_0c0e9d9b1e7d617b3e6842e85b9fb068=1493965041,1494212633,1494213218,1494554969; Hm_lpvt_0c0e9d9b1e7d617b3e6842e85b9fb068=1494569811'
+        'Cookie': cf.get('jianshu', 'cookie')
 
     }
 
@@ -47,14 +59,51 @@ class Jianshu:
 
     def initArt(self, art_dir):
 
-        imgs = self.getUploadImgs(art_dir)
-        print(imgs)
+        try:
+            imgs = self.getUploadImgs(art_dir)
+            print(imgs)
+        except:
+            print("cookie error")
+            cf.read(conf_path)
+            self.headers['Cookie'] = self.getCookie(username, password)
+            imgs = self.getUploadImgs(art_dir)
+
 
         source_file_path = art_dir + os.path.sep + 'source.md'
         source_file = open(source_file_path, 'w', encoding='utf-8')
         content = self.makeArtContent(imgs)
         source_file.write(content)
         source_file.close()
+
+    def getCookie(self, username, password):
+
+        url = 'https://www.jianshu.com/sign_in'
+        driver = webdriver.Chrome(chromedriver_path)
+        driver.get(url)
+        time.sleep(1)
+        driver.find_element_by_id('session_email_or_mobile_number').send_keys(username)
+        driver.find_element_by_id('session_password').send_keys(password)
+
+        input('去手动登录吧\n>  ')
+        # 网页源码
+        page = driver.page_source
+        # print(page)
+
+        pattern = r'(摹喵居士)'
+        res = re.findall(pattern, page)
+        print(res)
+
+        cookies = driver.get_cookies()
+        cookies_str = ''
+        for item in cookies:
+            cookies_str += item['name'] + '=' + item['value'] + ';'
+        print(cookies_str)
+
+        # 关闭浏览器
+        driver.close()
+
+        return cookies_str
+
 
     def makeArtContent(self, imgs):
 
