@@ -1,4 +1,4 @@
-tool/lib/__pycache__/
+__pycache__/
 .DS*
 img/
 
