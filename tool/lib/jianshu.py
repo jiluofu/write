@@ -42,11 +42,12 @@ class Jianshu:
 
         print('jianshu init')
         self.session.cookies = cookielib.LWPCookieJar(filename='cookies_jianshu')
-
+        
         try:
             self.session.cookies.load(ignore_discard=True)
         except:
             print("Cookie 未能加载")
+
 
     def initAllArt(self, root_dir):
 
@@ -80,7 +81,7 @@ class Jianshu:
         url = 'https://www.jianshu.com/sign_in'
         driver = webdriver.Chrome(chromedriver_path)
         driver.get(url)
-        time.sleep(1)
+        time.sleep(5)
         driver.find_element_by_id('session_email_or_mobile_number').send_keys(username)
         driver.find_element_by_id('session_password').send_keys(password)
 
