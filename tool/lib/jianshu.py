@@ -121,6 +121,7 @@ class Jianshu:
         print(img_dir)
         imgs = []
         arr = os.listdir(img_dir)
+        arr.sort(key = str.lower)
         for i in range(0, len(arr)):
             # print(dir)
             if not arr[i].startswith('.'):
