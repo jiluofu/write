@@ -135,10 +135,11 @@ class Jianshu:
         img_file_path = img_dir + os.path.sep + file_name
 
         res = self.getImgFileToken(file_name)
+        # print(res);
         token = res['token']
         key = res['key']
-        file_name_new = res['filename']
-        img_url = res['url']
+        # file_name_new = res['filename']
+        # img_url = res['url']
 
 
         img_url = self.postImgFile(img_file_path, token, key)
