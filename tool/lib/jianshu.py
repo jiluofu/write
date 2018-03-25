@@ -22,7 +22,7 @@ class Jianshu:
     agent = 'Mozilla/5.0 (Windows NT 5.1; rv:33.0) Gecko/20100101 Firefox/33.0'
     headers = {
         'Host': 'www.jianshu.com',
-        'Referer': 'http://www.jianshu.com/',
+        'Referer': 'https://www.jianshu.com/',
         'User-Agent': agent,
         'Cookie': cf.get('jianshu', 'cookie')
 
@@ -31,8 +31,8 @@ class Jianshu:
     upload_headers = {
 
         'Host': 'upload.qbox.me',
-        'Referer': 'http://www.jianshu.com/writer',
-        'origin': 'http://www.jianshu.com',
+        'Referer': 'https://www.jianshu.com/writer',
+        'origin': 'https://www.jianshu.com',
         'User-Agent': agent
     }
 
@@ -81,7 +81,8 @@ class Jianshu:
         url = 'https://www.jianshu.com/sign_in'
         driver = webdriver.Chrome(chromedriver_path)
         driver.get(url)
-        time.sleep(5)
+        time.sleep(10)
+        print(username)
         driver.find_element_by_id('session_email_or_mobile_number').send_keys(username)
         driver.find_element_by_id('session_password').send_keys(password)
 
@@ -135,7 +136,7 @@ class Jianshu:
         img_file_path = img_dir + os.path.sep + file_name
 
         res = self.getImgFileToken(file_name)
-        # print(res);
+        print(res);
         token = res['token']
         key = res['key']
         # file_name_new = res['filename']
@@ -149,13 +150,14 @@ class Jianshu:
 
     def getImgFileToken(self, file_name):
 
-        url = 'http://www.jianshu.com/upload_images/token.json'
+        url = 'https://www.jianshu.com/upload_images/token.json'
         params = {
 
             'filename':file_name
         }
         login_page = self.session.get(url, headers = self.headers, params = params)
         # self.session.cookies.save()
+        print(login_page.text)
         # print(self.session.cookies)
         res = json.loads(login_page.text)
         return res
