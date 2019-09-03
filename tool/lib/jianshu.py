@@ -112,7 +112,7 @@ class Jianshu:
 
         content = ['\n']
         for i in range(0, len(imgs)):
-            content.append('![](' + imgs[i] + '?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240' + ')')
+            content.append('![](' + imgs[i] + ')')
 
         return '\n\n\n'.join(content)
 
@@ -126,8 +126,10 @@ class Jianshu:
         for i in range(0, len(arr)):
             # print(dir)
             if not arr[i].startswith('.'):
-                print(arr[i])
-                img_url = self.uploadImgFile(img_dir, arr[i])
+                # print(arr[i])
+                # img_url = self.uploadImgFile(img_dir, arr[i])
+                img_url = img_dir + os.path.sep + arr[i]
+                print(img_url)
                 imgs.append(img_url)
         return imgs
 
